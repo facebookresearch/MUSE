@@ -198,12 +198,21 @@ def get_crosslingual_wordsim_scores(lang1, word2id1, embeddings1,
     """
     Return cross-lingual word similarity scores.
     """
-    if lang1 > lang2:
-        return get_crosslingual_wordsim_scores(lang2, word2id2, embeddings2,
-                                               lang1, word2id1, embeddings1, lower)
-    dirpath = os.path.join(SEMEVAL17_EVAL_PATH, '%s-%s' % (lang1, lang2))
-    if not os.path.isdir(dirpath):
+    f1 = os.path.join(SEMEVAL17_EVAL_PATH, '%s-%s-SEMEVAL17.txt' % (lang1, lang2))
+    f2 = os.path.join(SEMEVAL17_EVAL_PATH, '%s-%s-SEMEVAL17.txt' % (lang2, lang1))
+    if not (os.path.exists(f1) or os.path.exists(f2)):
         return None
+
+    if os.path.exists(f1):
+        coeff, found, not_found = get_spearman_rho(
+            word2id1, embeddings1, f1,
+            lower, word2id2, embeddings2
+        )
+    elif os.path.exists(f2):
+        coeff, found, not_found = get_spearman_rho(
+            word2id2, embeddings2, f2,
+            lower, word2id1, embeddings1
+        )
 
     scores = {}
     separator = "=" * (30 + 1 + 10 + 1 + 13 + 1 + 12)
@@ -212,29 +221,9 @@ def get_crosslingual_wordsim_scores(lang1, word2id1, embeddings1,
     logger.info(pattern % ("Dataset", "Found", "Not found", "Rho"))
     logger.info(separator)
 
-    for filename in list(os.listdir(dirpath)):
-        if 'SEMEVAL17' not in filename:
-            continue
-        filepath = os.path.join(dirpath, filename)
-        # language order
-        assert len(filename.split('_')) >= 2
-        split = filename.split('_')[0].split('-')
-        assert len(split) == 2
-        if split[0] == lang1.upper() and split[1] == lang2.upper():
-            coeff, found, not_found = get_spearman_rho(
-                word2id1, embeddings1, filepath,
-                lower, word2id2, embeddings2
-            )
-        elif split[0] == lang2.upper() and split[1] == lang1.upper():
-            coeff, found, not_found = get_spearman_rho(
-                word2id2, embeddings2, filepath,
-                lower, word2id1, embeddings1
-            )
-        else:
-            raise Exception('Unexpected parse: %s' % filename)
-        logger.info(pattern % (filename[:-4], str(found),
-                               str(not_found), "%.4f" % coeff))
-        scores[filename[:-4]] = coeff
+    task_name = '%s_%s_SEMEVAL17' % (lang1.upper(), lang2.upper())
+    logger.info(pattern % (task_name, str(found), str(not_found), "%.4f" % coeff))
+    scores[task_name] = coeff
     if not scores:
         return None
     logger.info(separator)
