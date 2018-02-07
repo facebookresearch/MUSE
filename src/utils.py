@@ -314,7 +314,7 @@ def normalize_embeddings(emb, types):
         if t == '':
             continue
         if t == 'center':
-            emb.sub_(emb.mean(1, keepdim=True).expand_as(emb))
+            emb.sub_(emb.mean(0, keepdim=True).expand_as(emb))
         elif t == 'renorm':
             emb.div_(emb.norm(2, 1, keepdim=True).expand_as(emb))
         else:
