@@ -124,7 +124,7 @@ def read_embeddings(path, dim=None, n_max=1e9):
     """
     word2id = {}
     embeddings = []
-    with open(path, 'r') as f:
+    with open(path, 'r', encoding='utf-8') as f:
         line = f.readline()
         dim = int(line.split(' ', 1)[1])
         for line in f:
@@ -275,7 +275,7 @@ def load_external_embeddings(params, source):
     lang = params.src_lang if source else params.tgt_lang
     emb_path = params.src_emb if source else params.tgt_emb
     _emb_dim_file = params.emb_dim
-    with open(emb_path) as f:
+    with open(emb_path, encoding='utf-8') as f:
         for i, line in enumerate(f):
             if i == 0:
                 split = line.split()
@@ -334,13 +334,13 @@ def export_embeddings(src_emb, tgt_emb, params):
     tgt_path = os.path.join(params.exp_path, 'vectors-%s.txt' % params.tgt_lang)
     # source embeddings
     logger.info('Writing source embeddings to %s ...' % src_path)
-    with open(src_path, 'w') as f:
+    with open(src_path, 'w', encoding='utf-8') as f:
         f.write("%i %i\n" % (n_src, dim))
         for i in range(len(src_id2word)):
             f.write("%s %s\n" % (src_id2word[i], " ".join(str(x) for x in src_emb[i])))
             # target embeddings
     logger.info('Writing target embeddings to %s ...' % tgt_path)
-    with open(tgt_path, 'w') as f:
+    with open(tgt_path, 'w', encoding='utf-8') as f:
         f.write("%i %i\n" % (n_tgt, dim))
         for i in range(len(tgt_id2word)):
             f.write("%s %s\n" % (tgt_id2word[i], " ".join(str(x) for x in tgt_emb[i])))
