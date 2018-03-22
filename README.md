@@ -49,14 +49,14 @@ For more details on these approaches, please check [here](https://arxiv.org/pdf/
 ### The supervised way: iterative Procrustes (CPU|GPU)
 To learn a mapping between the source and the target space, simply run:
 ```bash
-python supervised.py --src_lang en --tgt_lang es --src_emb data/wiki.en.vec --tgt_emb data/wiki.es.vec --n_iter 5 --dico_train default
+python supervised.py --src_lang en --tgt_lang es --src_emb data/wiki.en.vec --tgt_emb data/wiki.es.vec --n_refinement 5 --dico_train default
 ```
 By default, *dico_train* will point to our ground-truth dictionaries (downloaded above); when set to "identical_char" it will use identical character strings between source and target languages to form a vocabulary. Logs and embeddings will be saved in the dumped/ directory.
 
 ### The unsupervised way: adversarial training and refinement (CPU|GPU)
 To learn a mapping using adversarial training and iterative Procrustes refinement, run:
 ```bash
-python unsupervised.py --src_lang en --tgt_lang es --src_emb data/wiki.en.vec --tgt_emb data/wiki.es.vec
+python unsupervised.py --src_lang en --tgt_lang es --src_emb data/wiki.en.vec --tgt_emb data/wiki.es.vec --n_refinement 5
 ```
 By default, the validation metric is the mean cosine of word pairs from a synthetic dictionary built with CSLS (Cross-domain similarity local scaling).
 

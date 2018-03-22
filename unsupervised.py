@@ -59,8 +59,7 @@ parser.add_argument("--lr_decay", type=float, default=0.98, help="Learning rate 
 parser.add_argument("--min_lr", type=float, default=1e-6, help="Minimum learning rate (SGD only)")
 parser.add_argument("--lr_shrink", type=float, default=0.5, help="Shrink the learning rate if the validation metric decreases (1 to disable)")
 # training refinement
-parser.add_argument("--refinement", type=bool_flag, default=False, help="Use iterative Procrustes refinement")
-parser.add_argument("--n_iters", type=int, default=5, help="Number of iterations")
+parser.add_argument("--n_refinement", type=int, default=5, help="Number of refinement iterations (0 to disable the refinement procedure)")
 # dictionary creation parameters (for refinement)
 parser.add_argument("--dico_method", type=str, default='csls_knn_10', help="Method used for dictionary generation (nn/invsm_beta_30/csls_knn_10)")
 parser.add_argument("--dico_build", type=str, default='S2T&T2S', help="S2T,T2S,S2T|T2S,S2T&T2S")
@@ -151,13 +150,13 @@ if params.adversarial:
 """
 Learning loop for Procrustes Iterative Refinement
 """
-if params.refinement:
+if params.n_refinement > 0:
     # Get the best mapping according to VALIDATION_METRIC
     logger.info('----> ITERATIVE PROCRUSTES REFINEMENT <----\n\n')
     trainer.reload_best()
 
     # training loop
-    for n_iter in range(params.n_iters):
+    for n_iter in range(params.n_refinement):
 
         logger.info('Starting refinement iteration %i...' % n_iter)
 

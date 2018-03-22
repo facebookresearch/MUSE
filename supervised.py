@@ -36,7 +36,7 @@ parser.add_argument("--tgt_lang", type=str, default='es', help="Target language"
 parser.add_argument("--emb_dim", type=int, default=300, help="Embedding dimension")
 parser.add_argument("--max_vocab", type=int, default=200000, help="Maximum vocabulary size")
 # training refinement
-parser.add_argument("--n_iters", type=int, default=5, help="Number of iterations")
+parser.add_argument("--n_refinement", type=int, default=5, help="Number of refinement iterations (0 to disable the refinement procedure)")
 # dictionary creation parameters (for refinement)
 parser.add_argument("--dico_train", type=str, default="default", help="Path to training dictionary (default: use identical character strings)")
 parser.add_argument("--dico_method", type=str, default='csls_knn_10', help="Method used for dictionary generation (nn/invsm_beta_30/csls_knn_10)")
@@ -76,7 +76,7 @@ trainer.load_training_dico(params.dico_train)
 """
 Learning loop for Procrustes Iterative Refinement
 """
-for n_iter in range(params.n_iters):
+for n_iter in range(params.n_refinement):
 
     logger.info('Starting refinement iteration %i...' % n_iter)
 
