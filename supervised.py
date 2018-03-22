@@ -74,11 +74,11 @@ evaluator = Evaluator(trainer)
 trainer.load_training_dico(params.dico_train)
 
 """
-Learning loop for Procrustes Iterative Refinement
+Learning loop for Procrustes Iterative Learning
 """
-for n_iter in range(params.n_refinement):
+for n_iter in range(params.n_refinement + 1):
 
-    logger.info('Starting refinement iteration %i...' % n_iter)
+    logger.info('Starting iteration %i...' % n_iter)
 
     # build a dictionary from aligned embeddings (unless
     # it is the first iteration and we use the init one)
@@ -95,7 +95,7 @@ for n_iter in range(params.n_refinement):
     # JSON log / save best model / end of epoch
     logger.info("__log__:%s" % json.dumps(to_log))
     trainer.save_best(to_log, VALIDATION_METRIC)
-    logger.info('End of refinement iteration %i.\n\n' % n_iter)
+    logger.info('End of iteration %i.\n\n' % n_iter)
 
 
 # export embeddings to a text format
