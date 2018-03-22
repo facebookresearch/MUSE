@@ -248,6 +248,10 @@ def clip_parameters(model, clip):
 def load_external_embeddings(params, source, full_vocab=False):
     """
     Reload pretrained embeddings from a text file.
+    - `full_vocab == False` means that we load the `params.max_vocab` most frequent words.
+      It is used at the beginning of the experiment.
+    - `full_vocab == True` means that we load the entire embedding text file,
+      before we export the embeddings at the end of the experiment.
     """
     assert type(source) is bool
     word2id = {}
@@ -265,12 +269,20 @@ def load_external_embeddings(params, source, full_vocab=False):
                 assert _emb_dim_file == int(split[1])
             else:
                 word, vect = line.rstrip().split(' ', 1)
+                if not full_vocab:
+                    word = word.lower()
                 vect = np.fromstring(vect, sep=' ')
                 if np.linalg.norm(vect) == 0:  # avoid to have null embeddings
                     vect[0] = 0.01
                 if word in word2id:
-                    logger.warning('Word %s found twice in %s embedding file' % (word, 'source' if source else 'target'))
+                    if full_vocab:
+                        logger.warning("Word '%s' found twice in %s embedding file"
+                                       % (word, 'source' if source else 'target'))
                 else:
+                    if not vect.shape == (_emb_dim_file,):
+                        logger.warning("Invalid dimension (%i) for %s word '%s' in line %i."
+                                       % (vect.shape[0], 'source' if source else 'target', word, i))
+                        continue
                     assert vect.shape == (_emb_dim_file,), i
                     word2id[word] = len(word2id)
                     vectors.append(vect[None])
