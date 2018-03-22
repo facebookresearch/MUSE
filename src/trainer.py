@@ -13,7 +13,7 @@ import torch
 from torch.autograd import Variable
 from torch.nn import functional as F
 
-from .utils import get_optimizer, export_embeddings
+from .utils import get_optimizer, load_external_embeddings, normalize_embeddings, export_embeddings
 from .utils import clip_parameters
 from .dico_builder import build_dictionary
 from .evaluation.word_translation import DIC_EVAL_PATH, load_identical_char_dico, load_dictionary
@@ -244,8 +244,20 @@ class Trainer(object):
         """
         Export embeddings to a text file.
         """
-        src_emb = self.mapping(self.src_emb.weight).data
-        tgt_emb = self.tgt_emb.weight.data
-        src_emb = src_emb / src_emb.norm(2, 1, keepdim=True).expand_as(src_emb)
-        tgt_emb = tgt_emb / tgt_emb.norm(2, 1, keepdim=True).expand_as(tgt_emb)
-        export_embeddings(src_emb.cpu().numpy(), tgt_emb.cpu().numpy(), self.params)
+        params = self.params
+
+        # load all embeddings
+        params.src_dico.id2word, src_emb = load_external_embeddings(params, source=True, full_vocab=True)
+        params.tgt_dico.id2word, tgt_emb = load_external_embeddings(params, source=False, full_vocab=True)
+
+        # apply same normalization as during training
+        normalize_embeddings(src_emb, params.normalize_embeddings, mean=params.src_mean)
+        normalize_embeddings(tgt_emb, params.normalize_embeddings, mean=params.tgt_mean)
+
+        # map source embeddings to the target space
+        bs = 4096
+        for k in range(0, len(src_emb), bs):
+            x = Variable(src_emb[k:k + bs], volatile=True)
+            src_emb[k:k + bs] = self.mapping(x.cuda() if params.cuda else x).data.cpu()
+
+        export_embeddings(src_emb.numpy(), tgt_emb.numpy(), params)

@@ -6,6 +6,7 @@
 #
 
 import os
+import io
 import re
 import sys
 import pickle
@@ -23,7 +24,6 @@ from .dictionary import Dictionary
 
 
 MAIN_DUMP_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'dumped')
-
 
 logger = getLogger()
 
@@ -57,7 +57,8 @@ def initialize_exp(params):
 
     # dump parameters
     params.exp_path = get_exp_path(params) if not params.exp_path else params.exp_path
-    pickle.dump(params, open(os.path.join(params.exp_path, 'params.pkl'), 'wb'))
+    with io.open(os.path.join(params.exp_path, 'params.pkl'), 'wb') as f:
+        pickle.dump(params, f)
 
     # create logger
     logger = create_logger(os.path.join(params.exp_path, 'train.log'), vb=params.verbose)
@@ -244,7 +245,7 @@ def clip_parameters(model, clip):
             x.data.clamp_(-clip, clip)
 
 
-def load_external_embeddings(params, source):
+def load_external_embeddings(params, source, full_vocab=False):
     """
     Reload pretrained embeddings from a text file.
     """
@@ -256,7 +257,7 @@ def load_external_embeddings(params, source):
     lang = params.src_lang if source else params.tgt_lang
     emb_path = params.src_emb if source else params.tgt_emb
     _emb_dim_file = params.emb_dim
-    with open(emb_path) as f:
+    with io.open(emb_path, 'r', encoding='utf-8', newline='\n', errors='ignore') as f:
         for i, line in enumerate(f):
             if i == 0:
                 split = line.split()
@@ -267,13 +268,16 @@ def load_external_embeddings(params, source):
                 vect = np.fromstring(vect, sep=' ')
                 if np.linalg.norm(vect) == 0:  # avoid to have null embeddings
                     vect[0] = 0.01
-                assert word not in word2id
-                assert vect.shape == (_emb_dim_file,), i
-                word2id[word] = len(word2id)
-                vectors.append(vect[None])
-            if params.max_vocab > 0 and i >= params.max_vocab:
+                if word in word2id:
+                    logger.warning('Word %s found twice in %s embedding file' % (word, 'source' if source else 'target'))
+                else:
+                    assert vect.shape == (_emb_dim_file,), i
+                    word2id[word] = len(word2id)
+                    vectors.append(vect[None])
+            if params.max_vocab > 0 and len(word2id) >= params.max_vocab and not full_vocab:
                 break
 
+    assert len(word2id) == len(vectors)
     logger.info("Loaded %i pre-trained word embeddings" % len(vectors))
 
     # compute new vocabulary / embeddings
@@ -281,13 +285,13 @@ def load_external_embeddings(params, source):
     dico = Dictionary(id2word, word2id, lang)
     embeddings = np.concatenate(vectors, 0)
     embeddings = torch.from_numpy(embeddings).float()
-    embeddings = embeddings.cuda() if params.cuda else embeddings
+    embeddings = embeddings.cuda() if (params.cuda and not full_vocab) else embeddings
     assert embeddings.size() == (len(word2id), params.emb_dim), ((len(word2id), params.emb_dim, embeddings.size()))
 
     return dico, embeddings
 
 
-def normalize_embeddings(emb, types):
+def normalize_embeddings(emb, types, mean=None):
     """
     Normalize embeddings by their norms / recenter them.
     """
@@ -295,11 +299,14 @@ def normalize_embeddings(emb, types):
         if t == '':
             continue
         if t == 'center':
-            emb.sub_(emb.mean(0, keepdim=True).expand_as(emb))
+            if mean is None:
+                mean = emb.mean(0, keepdim=True).expand_as(emb)
+            emb.sub_(mean)
         elif t == 'renorm':
             emb.div_(emb.norm(2, 1, keepdim=True).expand_as(emb))
         else:
             raise Exception('Unknown normalization type: "%s"' % t)
+    return mean.cpu() if mean is not None else None
 
 
 def export_embeddings(src_emb, tgt_emb, params):
@@ -315,13 +322,13 @@ def export_embeddings(src_emb, tgt_emb, params):
     tgt_path = os.path.join(params.exp_path, 'vectors-%s.txt' % params.tgt_lang)
     # source embeddings
     logger.info('Writing source embeddings to %s ...' % src_path)
-    with open(src_path, 'w') as f:
-        f.write("%i %i\n" % (n_src, dim))
+    with io.open(src_path, 'w', encoding='utf-8') as f:
+        f.write(u"%i %i\n" % (n_src, dim))
         for i in range(len(src_id2word)):
-            f.write("%s %s\n" % (src_id2word[i], " ".join(str(x) for x in src_emb[i])))
-            # target embeddings
+            f.write(u"%s %s\n" % (src_id2word[i], " ".join('%.5f' % x for x in src_emb[i])))
+    # target embeddings
     logger.info('Writing target embeddings to %s ...' % tgt_path)
-    with open(tgt_path, 'w') as f:
-        f.write("%i %i\n" % (n_tgt, dim))
+    with io.open(tgt_path, 'w', encoding='utf-8') as f:
+        f.write(u"%i %i\n" % (n_tgt, dim))
         for i in range(len(tgt_id2word)):
-            f.write("%s %s\n" % (tgt_id2word[i], " ".join(str(x) for x in tgt_emb[i])))
+            f.write(u"%s %s\n" % (tgt_id2word[i], " ".join('%.5f' % x for x in tgt_emb[i])))

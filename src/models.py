@@ -75,8 +75,8 @@ def build_model(params, with_dis):
             discriminator.cuda()
 
     # normalize embeddings
-    normalize_embeddings(src_emb.weight.data, params.normalize_embeddings)
+    params.src_mean = normalize_embeddings(src_emb.weight.data, params.normalize_embeddings)
     if params.tgt_lang:
-        normalize_embeddings(tgt_emb.weight.data, params.normalize_embeddings)
+        params.tgt_mean = normalize_embeddings(tgt_emb.weight.data, params.normalize_embeddings)
 
     return src_emb, tgt_emb, mapping, discriminator
