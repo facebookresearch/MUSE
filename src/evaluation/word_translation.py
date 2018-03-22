@@ -6,6 +6,7 @@
 #
 
 import os
+import io
 from logging import getLogger
 import numpy as np
 import torch
@@ -13,7 +14,7 @@ import torch
 from ..utils import get_nn_avg_dist
 
 
-DIC_EVAL_PATH = 'data/crosslingual/dictionaries/'
+DIC_EVAL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'crosslingual', 'dictionaries')
 
 
 logger = getLogger()
@@ -52,7 +53,7 @@ def load_dictionary(path, word2id1, word2id2):
     not_found1 = 0
     not_found2 = 0
 
-    with open(path, 'r') as f:
+    with io.open(path, 'r', encoding='utf-8') as f:
         for _, line in enumerate(f):
             assert line == line.lower()
             word1, word2 = line.rstrip().split()

@@ -6,6 +6,7 @@
 #
 
 import os
+import io
 from logging import getLogger
 import numpy as np
 import torch
@@ -35,7 +36,7 @@ def load_europarl_data(lg1, lg2, n_max=1e10, lower=True):
     for lg in [lg1, lg2]:
         fname = os.path.join(EUROPARL_DIR, 'europarl-v7.%s-%s.%s' % (lg1, lg2, lg))
 
-        with open(fname) as f:
+        with io.open(fname, 'r', encoding='utf-8') as f:
             for i, line in enumerate(f):
                 if i >= n_max:
                     break
