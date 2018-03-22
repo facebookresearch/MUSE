@@ -6,6 +6,7 @@
 #
 
 import os
+import io
 from logging import getLogger
 import numpy as np
 import torch
@@ -25,7 +26,7 @@ def get_word_pairs(path, lower=True):
     """
     assert os.path.isfile(path) and type(lower) is bool
     word_pairs = []
-    with open(path) as f:
+    with io.open(path, 'r', encoding='utf-8') as f:
         for line in f:
             line = line.rstrip()
             line = line.lower() if lower else line
@@ -125,43 +126,43 @@ def get_wordanalogy_scores(language, word2id, embeddings, lower):
     word_ids = {}
     queries = {}
 
-    for line in open(os.path.join(dirpath, 'questions-words.txt'), 'r'):
+    with io.open(os.path.join(dirpath, 'questions-words.txt'), 'r', encoding='utf-8') as f:
+        for line in f:
+            # new line
+            line = line.rstrip()
+            if lower:
+                line = line.lower()
 
-        # new line
-        line = line.rstrip()
-        if lower:
-            line = line.lower()
+            # new category
+            if ":" in line:
+                assert line[1] == ' '
+                category = line[2:]
+                assert category not in scores
+                scores[category] = {'n_found': 0, 'n_not_found': 0, 'n_correct': 0}
+                word_ids[category] = []
+                queries[category] = []
+                continue
 
-        # new category
-        if ":" in line:
-            assert line[1] == ' '
-            category = line[2:]
-            assert category not in scores
-            scores[category] = {'n_found': 0, 'n_not_found': 0, 'n_correct': 0}
-            word_ids[category] = []
-            queries[category] = []
-            continue
+            # get word IDs
+            assert len(line.split()) == 4, line
+            word1, word2, word3, word4 = line.split()
+            word_id1 = get_word_id(word1, word2id, lower)
+            word_id2 = get_word_id(word2, word2id, lower)
+            word_id3 = get_word_id(word3, word2id, lower)
+            word_id4 = get_word_id(word4, word2id, lower)
 
-        # get word IDs
-        assert len(line.split()) == 4, line
-        word1, word2, word3, word4 = line.split()
-        word_id1 = get_word_id(word1, word2id, lower)
-        word_id2 = get_word_id(word2, word2id, lower)
-        word_id3 = get_word_id(word3, word2id, lower)
-        word_id4 = get_word_id(word4, word2id, lower)
+            # if at least one word is not found
+            if any(x is None for x in [word_id1, word_id2, word_id3, word_id4]):
+                scores[category]['n_not_found'] += 1
+                continue
+            else:
+                scores[category]['n_found'] += 1
+                word_ids[category].append([word_id1, word_id2, word_id3, word_id4])
+                # generate query vector and get nearest neighbors
+                query = embeddings[word_id1] - embeddings[word_id2] + embeddings[word_id4]
+                query = query / np.linalg.norm(query)
 
-        # if at least one word is not found
-        if any(x is None for x in [word_id1, word_id2, word_id3, word_id4]):
-            scores[category]['n_not_found'] += 1
-            continue
-        else:
-            scores[category]['n_found'] += 1
-            word_ids[category].append([word_id1, word_id2, word_id3, word_id4])
-            # generate query vector and get nearest neighbors
-            query = embeddings[word_id1] - embeddings[word_id2] + embeddings[word_id4]
-            query = query / np.linalg.norm(query)
-
-            queries[category].append(query)
+                queries[category].append(query)
 
     # Compute score for each category
     for cat in queries:
