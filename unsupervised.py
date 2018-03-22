@@ -29,6 +29,7 @@ parser.add_argument("--verbose", type=int, default=2, help="Verbose level (2:deb
 parser.add_argument("--exp_path", type=str, default="", help="Where to store experiment logs and models")
 parser.add_argument("--cuda", type=bool_flag, default=True, help="Run on GPU")
 parser.add_argument("--export", type=bool_flag, default=True, help="Export embeddings after training")
+parser.add_argument("--exp_name", type=str, default="debug", help="Experiment name")
 # data
 parser.add_argument("--src_lang", type=str, default='en', help="Source language")
 parser.add_argument("--tgt_lang", type=str, default='es', help="Target language")

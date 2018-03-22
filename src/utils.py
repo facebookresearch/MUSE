@@ -118,30 +118,6 @@ def get_idf(europarl, src_lg, tgt_lg, n_idf):
     return idf
 
 
-def read_embeddings(path, dim=None, n_max=1e9):
-    """
-    Read all words from a word embedding file, and optionally filter them.
-    """
-    word2id = {}
-    embeddings = []
-    with open(path, 'r') as f:
-        line = f.readline()
-        dim = int(line.split(' ', 1)[1])
-        for line in f:
-            word, vec = line.split(' ', 1)
-            if word in word2id:
-                logger.warning('Word "%s" has several embeddings!' % word)
-                continue
-            word2id[word] = len(word2id)
-            embeddings.append(np.fromstring(vec, sep=' '))
-            if len(word2id) == n_max:
-                break
-    embeddings = np.array(embeddings, dtype=np.float32)
-    embeddings = embeddings / np.sqrt((embeddings ** 2).sum(1))[:, None]
-    logger.info("Found %s word vectors of size %s" % (len(word2id), dim))
-    return word2id, embeddings
-
-
 def get_nn_avg_dist(emb, query, knn):
     """
     Compute the average distance of the `knn` nearest neighbors
@@ -240,12 +216,17 @@ def get_exp_path(params):
     Create a directory to store the experiment.
     """
     # create the main dump path if it does not exist
-    if not os.path.exists(MAIN_DUMP_PATH):
-        subprocess.Popen("mkdir %s" % MAIN_DUMP_PATH, shell=True).wait()
+    exp_folder = MAIN_DUMP_PATH
+    if not os.path.exists(exp_folder):
+        subprocess.Popen("mkdir %s" % exp_folder, shell=True).wait()
+    assert params.exp_name != ''
+    exp_folder = os.path.join(exp_folder, params.exp_name)
+    if not os.path.exists(exp_folder):
+        subprocess.Popen("mkdir %s" % exp_folder, shell=True).wait()
     chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
     while True:
         exp_name = ''.join(random.choice(chars) for _ in range(10))
-        exp_path = os.path.join(MAIN_DUMP_PATH, exp_name)
+        exp_path = os.path.join(exp_folder, exp_name)
         if not os.path.isdir(exp_path):
             break
     # create the dump folder

@@ -17,8 +17,9 @@ from src.trainer import Trainer
 from src.evaluation import Evaluator
 
 
-VALIDATION_METRIC = 'mean_cosine-csls_knn_10-S2T-10000'
-
+VALIDATION_METRIC = 'precision_at_1-csls_knn_10'
+# unsupervised criterion: 'mean_cosine-csls_knn_10-S2T-10000'
+#   supervised criterion: 'precision_at_1-csls_knn_10'
 
 # main
 parser = argparse.ArgumentParser(description='Supervised training')
@@ -27,6 +28,8 @@ parser.add_argument("--verbose", type=int, default=2, help="Verbose level (2:deb
 parser.add_argument("--exp_path", type=str, default="", help="Where to store experiment logs and models")
 parser.add_argument("--cuda", type=bool_flag, default=True, help="Run on GPU")
 parser.add_argument("--export", type=bool_flag, default=True, help="Export embeddings after training")
+parser.add_argument("--exp_name", type=str, default="debug", help="Experiment name")
+
 # data
 parser.add_argument("--src_lang", type=str, default='en', help="Source language")
 parser.add_argument("--tgt_lang", type=str, default='es', help="Target language")

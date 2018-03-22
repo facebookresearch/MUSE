@@ -21,6 +21,7 @@ parser = argparse.ArgumentParser(description='Evaluation')
 parser.add_argument("--verbose", type=int, default=2, help="Verbose level (2:debug, 1:info, 0:warning)")
 parser.add_argument("--exp_path", type=str, default="", help="Where to store experiment logs and models")
 parser.add_argument("--cuda", type=bool_flag, default=True, help="Run on GPU")
+parser.add_argument("--exp_name", type=str, default="debug", help="Experiment name")
 # data
 parser.add_argument("--src_lang", type=str, default="", help="Source language")
 parser.add_argument("--tgt_lang", type=str, default="", help="Target language")
