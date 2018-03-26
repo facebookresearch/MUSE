@@ -245,15 +245,10 @@ def clip_parameters(model, clip):
             x.data.clamp_(-clip, clip)
 
 
-def load_external_embeddings(params, source, full_vocab=False):
+def read_txt_embeddings(params, source, full_vocab):
     """
     Reload pretrained embeddings from a text file.
-    - `full_vocab == False` means that we load the `params.max_vocab` most frequent words.
-      It is used at the beginning of the experiment.
-    - `full_vocab == True` means that we load the entire embedding text file,
-      before we export the embeddings at the end of the experiment.
     """
-    assert type(source) is bool
     word2id = {}
     vectors = []
 
@@ -290,7 +285,7 @@ def load_external_embeddings(params, source, full_vocab=False):
                 break
 
     assert len(word2id) == len(vectors)
-    logger.info("Loaded %i pre-trained word embeddings" % len(vectors))
+    logger.info("Loaded %i pre-trained word embeddings." % len(vectors))
 
     # compute new vocabulary / embeddings
     id2word = {v: k for k, v in word2id.items()}
@@ -298,9 +293,72 @@ def load_external_embeddings(params, source, full_vocab=False):
     embeddings = np.concatenate(vectors, 0)
     embeddings = torch.from_numpy(embeddings).float()
     embeddings = embeddings.cuda() if (params.cuda and not full_vocab) else embeddings
-    assert embeddings.size() == (len(word2id), params.emb_dim), ((len(word2id), params.emb_dim, embeddings.size()))
 
+    assert embeddings.size() == (len(dico), params.emb_dim)
     return dico, embeddings
+
+
+def select_subset(word_list, max_vocab):
+    """
+    Select a subset of words to consider, to deal with words having embeddings
+    available in different casings. In particular, we select the embeddings of
+    the most frequent words, that are usually of better quality.
+    """
+    word2id = {}
+    indexes = []
+    for i, word in enumerate(word_list):
+        word = word.lower()
+        if word not in word2id:
+            word2id[word] = len(word2id)
+            indexes.append(i)
+        if max_vocab > 0 and len(word2id) >= max_vocab:
+            break
+    assert len(word2id) == len(indexes)
+    return word2id, torch.LongTensor(indexes)
+
+
+def load_pth_embeddings(params, source, full_vocab):
+    """
+    Reload pretrained embeddings from a PyTorch binary file.
+    """
+    # reload PyTorch binary file
+    lang = params.src_lang if source else params.tgt_lang
+    data = torch.load(params.src_emb if source else params.tgt_emb)
+    dico = data['dico']
+    embeddings = data['vectors']
+    assert dico.lang == lang
+    assert embeddings.size() == (len(dico), params.emb_dim)
+    logger.info("Loaded %i pre-trained word embeddings." % len(dico))
+
+    # select a subset of word embeddings (to deal with casing)
+    if not full_vocab:
+        word2id, indexes = select_subset([dico[i] for i in range(len(dico))], params.max_vocab)
+        id2word = {v: k for k, v in word2id.items()}
+        dico = Dictionary(id2word, word2id, lang)
+        embeddings = embeddings[indexes]
+
+    assert embeddings.size() == (len(dico), params.emb_dim)
+    return dico, embeddings
+
+
+def load_embeddings(params, source, full_vocab=False):
+    """
+    Reload pretrained embeddings.
+    - `full_vocab == False` means that we load the `params.max_vocab` most frequent words.
+      It is used at the beginning of the experiment.
+      In that setting, if two words with a different casing occur, we lowercase both, and
+      only consider the most frequent one. For instance, if "London" and "london" are in
+      the embeddings file, we only consider the most frequent one, (in that case, probably
+      London). This is done to deal with the lowercased dictionaries.
+    - `full_vocab == True` means that we load the entire embedding text file,
+      before we export the embeddings at the end of the experiment.
+    """
+    assert type(source) is bool and type(full_vocab) is bool
+    emb_path = params.src_emb if source else params.tgt_emb
+    if emb_path.endswith('.pth'):
+        return load_pth_embeddings(params, source, full_vocab)
+    else:
+        return read_txt_embeddings(params, source, full_vocab)
 
 
 def normalize_embeddings(emb, types, mean=None):

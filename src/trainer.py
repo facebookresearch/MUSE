@@ -13,7 +13,7 @@ import torch
 from torch.autograd import Variable
 from torch.nn import functional as F
 
-from .utils import get_optimizer, load_external_embeddings, normalize_embeddings, export_embeddings
+from .utils import get_optimizer, load_embeddings, normalize_embeddings, export_embeddings
 from .utils import clip_parameters
 from .dico_builder import build_dictionary
 from .evaluation.word_translation import DIC_EVAL_PATH, load_identical_char_dico, load_dictionary
@@ -248,8 +248,8 @@ class Trainer(object):
 
         # load all embeddings
         logger.info("Reloading all embeddings for mapping ...")
-        params.src_dico, src_emb = load_external_embeddings(params, source=True, full_vocab=True)
-        params.tgt_dico, tgt_emb = load_external_embeddings(params, source=False, full_vocab=True)
+        params.src_dico, src_emb = load_embeddings(params, source=True, full_vocab=True)
+        params.tgt_dico, tgt_emb = load_embeddings(params, source=False, full_vocab=True)
 
         # apply same normalization as during training
         normalize_embeddings(src_emb, params.normalize_embeddings, mean=params.src_mean)

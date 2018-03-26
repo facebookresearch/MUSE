@@ -34,7 +34,7 @@ parser.add_argument("--export", type=str, default="text", help="Export embedding
 parser.add_argument("--src_lang", type=str, default='en', help="Source language")
 parser.add_argument("--tgt_lang", type=str, default='es', help="Target language")
 parser.add_argument("--emb_dim", type=int, default=300, help="Embedding dimension")
-parser.add_argument("--max_vocab", type=int, default=200000, help="Maximum vocabulary size")
+parser.add_argument("--max_vocab", type=int, default=200000, help="Maximum vocabulary size (-1 to disable)")
 # training refinement
 parser.add_argument("--n_refinement", type=int, default=5, help="Number of refinement iterations (0 to disable the refinement procedure)")
 # dictionary creation parameters (for refinement)

@@ -34,7 +34,7 @@ parser.add_argument("--export", type=str, default="text", help="Export embedding
 parser.add_argument("--src_lang", type=str, default='en', help="Source language")
 parser.add_argument("--tgt_lang", type=str, default='es', help="Target language")
 parser.add_argument("--emb_dim", type=int, default=300, help="Embedding dimension")
-parser.add_argument("--max_vocab", type=int, default=200000, help="Maximum vocabulary size")
+parser.add_argument("--max_vocab", type=int, default=200000, help="Maximum vocabulary size (-1 to disable)")
 # mapping
 parser.add_argument("--map_id_init", type=bool_flag, default=True, help="Initialize the mapping as an identity matrix")
 parser.add_argument("--map_beta", type=float, default=0.001, help="Beta for orthogonalization")
