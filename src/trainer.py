@@ -242,13 +242,14 @@ class Trainer(object):
 
     def export(self):
         """
-        Export embeddings to a text file.
+        Export embeddings.
         """
         params = self.params
 
         # load all embeddings
-        params.src_dico.id2word, src_emb = load_external_embeddings(params, source=True, full_vocab=True)
-        params.tgt_dico.id2word, tgt_emb = load_external_embeddings(params, source=False, full_vocab=True)
+        logger.info("Reloading all embeddings for mapping ...")
+        params.src_dico, src_emb = load_external_embeddings(params, source=True, full_vocab=True)
+        params.tgt_dico, tgt_emb = load_external_embeddings(params, source=False, full_vocab=True)
 
         # apply same normalization as during training
         normalize_embeddings(src_emb, params.normalize_embeddings, mean=params.src_mean)
@@ -256,8 +257,10 @@ class Trainer(object):
 
         # map source embeddings to the target space
         bs = 4096
-        for k in range(0, len(src_emb), bs):
+        logger.info("Map source embeddings to the target space ...")
+        for i, k in enumerate(range(0, len(src_emb), bs)):
             x = Variable(src_emb[k:k + bs], volatile=True)
             src_emb[k:k + bs] = self.mapping(x.cuda() if params.cuda else x).data.cpu()
 
-        export_embeddings(src_emb.numpy(), tgt_emb.numpy(), params)
+        # write embeddings to the disk
+        export_embeddings(src_emb, tgt_emb, params)

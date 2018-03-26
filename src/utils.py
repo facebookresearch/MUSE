@@ -56,7 +56,7 @@ def initialize_exp(params):
             torch.cuda.manual_seed(params.seed)
 
     # dump parameters
-    params.exp_path = get_exp_path(params) if not params.exp_path else params.exp_path
+    params.exp_path = get_exp_path(params)
     with io.open(os.path.join(params.exp_path, 'params.pkl'), 'wb') as f:
         pickle.dump(params, f)
 
@@ -217,7 +217,7 @@ def get_exp_path(params):
     Create a directory to store the experiment.
     """
     # create the main dump path if it does not exist
-    exp_folder = MAIN_DUMP_PATH
+    exp_folder = MAIN_DUMP_PATH if params.exp_path == '' else params.exp_path
     if not os.path.exists(exp_folder):
         subprocess.Popen("mkdir %s" % exp_folder, shell=True).wait()
     assert params.exp_name != ''
@@ -323,24 +323,32 @@ def normalize_embeddings(emb, types, mean=None):
 
 def export_embeddings(src_emb, tgt_emb, params):
     """
-    Export embeddings to a text file.
+    Export embeddings to a text or a PyTorch file.
     """
-    src_id2word = params.src_dico.id2word
-    tgt_id2word = params.tgt_dico.id2word
-    n_src = len(src_id2word)
-    n_tgt = len(tgt_id2word)
-    dim = src_emb.shape[1]
-    src_path = os.path.join(params.exp_path, 'vectors-%s.txt' % params.src_lang)
-    tgt_path = os.path.join(params.exp_path, 'vectors-%s.txt' % params.tgt_lang)
-    # source embeddings
-    logger.info('Writing source embeddings to %s ...' % src_path)
-    with io.open(src_path, 'w', encoding='utf-8') as f:
-        f.write(u"%i %i\n" % (n_src, dim))
-        for i in range(len(src_id2word)):
-            f.write(u"%s %s\n" % (src_id2word[i], " ".join('%.5f' % x for x in src_emb[i])))
-    # target embeddings
-    logger.info('Writing target embeddings to %s ...' % tgt_path)
-    with io.open(tgt_path, 'w', encoding='utf-8') as f:
-        f.write(u"%i %i\n" % (n_tgt, dim))
-        for i in range(len(tgt_id2word)):
-            f.write(u"%s %s\n" % (tgt_id2word[i], " ".join('%.5f' % x for x in tgt_emb[i])))
+    assert params.export in ["text", "pth"]
+
+    # text file
+    if params.export == "text":
+        src_path = os.path.join(params.exp_path, 'vectors-%s.txt' % params.src_lang)
+        tgt_path = os.path.join(params.exp_path, 'vectors-%s.txt' % params.tgt_lang)
+        # source embeddings
+        logger.info('Writing source embeddings to %s ...' % src_path)
+        with io.open(src_path, 'w', encoding='utf-8') as f:
+            f.write(u"%i %i\n" % src_emb.size())
+            for i in range(len(params.src_dico)):
+                f.write(u"%s %s\n" % (params.src_dico[i], " ".join('%.5f' % x for x in src_emb[i])))
+        # target embeddings
+        logger.info('Writing target embeddings to %s ...' % tgt_path)
+        with io.open(tgt_path, 'w', encoding='utf-8') as f:
+            f.write(u"%i %i\n" % tgt_emb.size())
+            for i in range(len(params.tgt_dico)):
+                f.write(u"%s %s\n" % (params.tgt_dico[i], " ".join('%.5f' % x for x in tgt_emb[i])))
+
+    # PyTorch file
+    if params.export == "pth":
+        src_path = os.path.join(params.exp_path, 'vectors-%s.pth' % params.src_lang)
+        tgt_path = os.path.join(params.exp_path, 'vectors-%s.pth' % params.tgt_lang)
+        logger.info('Writing source embeddings to %s ...' % src_path)
+        torch.save({'dico': params.src_dico, 'vectors': src_emb}, src_path)
+        logger.info('Writing target embeddings to %s ...' % tgt_path)
+        torch.save({'dico': params.tgt_dico, 'vectors': tgt_emb}, tgt_path)

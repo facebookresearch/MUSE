@@ -27,9 +27,9 @@ parser = argparse.ArgumentParser(description='Unsupervised training')
 parser.add_argument("--seed", type=int, default=-1, help="Initialization seed")
 parser.add_argument("--verbose", type=int, default=2, help="Verbose level (2:debug, 1:info, 0:warning)")
 parser.add_argument("--exp_path", type=str, default="", help="Where to store experiment logs and models")
-parser.add_argument("--cuda", type=bool_flag, default=True, help="Run on GPU")
-parser.add_argument("--export", type=bool_flag, default=True, help="Export embeddings after training")
 parser.add_argument("--exp_name", type=str, default="debug", help="Experiment name")
+parser.add_argument("--cuda", type=bool_flag, default=True, help="Run on GPU")
+parser.add_argument("--export", type=str, default="text", help="Export embeddings after training (text / pth)")
 # data
 parser.add_argument("--src_lang", type=str, default='en', help="Source language")
 parser.add_argument("--tgt_lang", type=str, default='es', help="Target language")
@@ -85,6 +85,7 @@ assert params.dis_lambda > 0 and params.dis_steps > 0
 assert 0 < params.lr_shrink <= 1
 assert os.path.isfile(params.src_emb)
 assert os.path.isfile(params.tgt_emb)
+assert params.export in ["", "text", "pth"]
 
 # build model / trainer / evaluator
 logger = initialize_exp(params)
@@ -176,7 +177,7 @@ if params.n_refinement > 0:
         logger.info('End of refinement iteration %i.\n\n' % n_iter)
 
 
-# export embeddings to a text format
+# export embeddings
 if params.export:
     trainer.reload_best()
     trainer.export()
