@@ -423,10 +423,10 @@ def export_embeddings(src_emb, tgt_emb, params):
     """
     Export embeddings to a text or a PyTorch file.
     """
-    assert params.export in ["text", "pth"]
+    assert params.export in ["txt", "pth"]
 
     # text file
-    if params.export == "text":
+    if params.export == "txt":
         src_path = os.path.join(params.exp_path, 'vectors-%s.txt' % params.src_lang)
         tgt_path = os.path.join(params.exp_path, 'vectors-%s.txt' % params.tgt_lang)
         # source embeddings
