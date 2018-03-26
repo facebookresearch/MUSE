@@ -68,6 +68,18 @@ def initialize_exp(params):
     return logger
 
 
+def load_fasttext_model(path):
+    """
+    Load a binarized fastText model.
+    """
+    try:
+        import fastText
+    except ImportError:
+        raise Exception("Unable to import fastText. Please install fastText for Python: "
+                        "https://github.com/facebookresearch/fastText")
+    return fastText.load_model(path)
+
+
 def bow(sentences, word_vec, normalize=False):
     """
     Get sentence representations using average bag-of-words.
@@ -341,6 +353,32 @@ def load_pth_embeddings(params, source, full_vocab):
     return dico, embeddings
 
 
+def load_bin_embeddings(params, source, full_vocab):
+    """
+    Reload pretrained embeddings from a fastText binary file.
+    """
+    # reload fastText binary file
+    lang = params.src_lang if source else params.tgt_lang
+    model = load_fasttext_model(params.src_emb if source else params.tgt_emb)
+    words = model.get_labels()
+    embeddings = torch.from_numpy(model.get_input_matrix())
+    assert model.get_dimension() == params.emb_dim
+    assert embeddings.size() == (len(words), params.emb_dim)
+    logger.info("Loaded %i pre-trained word embeddings." % len(words))
+
+    # select a subset of word embeddings (to deal with casing)
+    if not full_vocab:
+        word2id, indexes = select_subset(words, params.max_vocab)
+        embeddings = embeddings[indexes]
+    else:
+        word2id = {w: i for i, w in enumerate(words)}
+    id2word = {i: w for w, i in word2id.items()}
+    dico = Dictionary(id2word, word2id, lang)
+
+    assert embeddings.size() == (len(dico), params.emb_dim)
+    return dico, embeddings
+
+
 def load_embeddings(params, source, full_vocab=False):
     """
     Reload pretrained embeddings.
@@ -357,6 +395,8 @@ def load_embeddings(params, source, full_vocab=False):
     emb_path = params.src_emb if source else params.tgt_emb
     if emb_path.endswith('.pth'):
         return load_pth_embeddings(params, source, full_vocab)
+    if emb_path.endswith('.bin'):
+        return load_bin_embeddings(params, source, full_vocab)
     else:
         return read_txt_embeddings(params, source, full_vocab)
 
