@@ -28,6 +28,7 @@ parser.add_argument("--seed", type=int, default=-1, help="Initialization seed")
 parser.add_argument("--verbose", type=int, default=2, help="Verbose level (2:debug, 1:info, 0:warning)")
 parser.add_argument("--exp_path", type=str, default="", help="Where to store experiment logs and models")
 parser.add_argument("--exp_name", type=str, default="debug", help="Experiment name")
+parser.add_argument("--exp_id", type=str, default="", help="Experiment ID")
 parser.add_argument("--cuda", type=bool_flag, default=True, help="Run on GPU")
 parser.add_argument("--export", type=str, default="txt", help="Export embeddings after training (txt / pth)")
 # data

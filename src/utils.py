@@ -236,12 +236,16 @@ def get_exp_path(params):
     exp_folder = os.path.join(exp_folder, params.exp_name)
     if not os.path.exists(exp_folder):
         subprocess.Popen("mkdir %s" % exp_folder, shell=True).wait()
-    chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
-    while True:
-        exp_name = ''.join(random.choice(chars) for _ in range(10))
-        exp_path = os.path.join(exp_folder, exp_name)
-        if not os.path.isdir(exp_path):
-            break
+    if params.exp_id == '':
+        chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
+        while True:
+            exp_id = ''.join(random.choice(chars) for _ in range(10))
+            exp_path = os.path.join(exp_folder, exp_id)
+            if not os.path.isdir(exp_path):
+                break
+    else:
+        exp_path = os.path.join(exp_folder, params.exp_id)
+        assert not os.path.isdir(exp_path), exp_path
     # create the dump folder
     if not os.path.isdir(exp_path):
         subprocess.Popen("mkdir %s" % exp_path, shell=True).wait()
@@ -361,10 +365,11 @@ def load_bin_embeddings(params, source, full_vocab):
     lang = params.src_lang if source else params.tgt_lang
     model = load_fasttext_model(params.src_emb if source else params.tgt_emb)
     words = model.get_labels()
-    embeddings = torch.from_numpy(model.get_input_matrix())
     assert model.get_dimension() == params.emb_dim
+    logger.info("Loaded binary model. Generating embeddings ...")
+    embeddings = torch.from_numpy(np.concatenate([model.get_word_vector(w)[None] for w in words], 0))
+    logger.info("Generated embeddings for %i words." % len(words))
     assert embeddings.size() == (len(words), params.emb_dim)
-    logger.info("Loaded %i pre-trained word embeddings." % len(words))
 
     # select a subset of word embeddings (to deal with casing)
     if not full_vocab:
