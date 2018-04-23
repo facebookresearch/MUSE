@@ -61,3 +61,12 @@ class Dictionary(object):
         Returns the index of the specified word.
         """
         return self.word2id[word]
+
+    def prune(self, max_vocab):
+        """
+        Limit the vocabulary size.
+        """
+        assert max_vocab >= 1
+        self.id2word = {k: v for k, v in self.id2word.items() if k < max_vocab}
+        self.word2id = {v: k for k, v in self.id2word.items()}
+        self.check_valid()
