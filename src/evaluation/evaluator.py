@@ -10,7 +10,7 @@ from copy import deepcopy
 import numpy as np
 from torch.autograd import Variable
 
-from . import get_wordsim_scores, get_crosslingual_wordsim_scores
+from . import get_wordsim_scores, get_crosslingual_wordsim_scores, get_wordanalogy_scores
 from . import get_word_translation_accuracy
 from . import load_europarl_data, get_sent_translation_accuracy
 from ..dico_builder import get_candidates, build_dictionary
@@ -60,6 +60,30 @@ class Evaluator(object):
             ws_monolingual_scores = (src_ws_monolingual_scores + tgt_ws_monolingual_scores) / 2
             logger.info("Monolingual word similarity score average: %.5f" % ws_monolingual_scores)
             to_log['ws_monolingual_scores'] = ws_monolingual_scores
+
+    def monolingual_wordanalogy(self, to_log):
+        """
+        Evaluation on monolingual word analogy.
+        """
+        src_analogy_scores = get_wordanalogy_scores(
+            self.src_dico.lang, self.src_dico.word2id,
+            self.mapping(self.src_emb.weight).data.cpu().numpy()
+        )
+        if self.params.tgt_lang:
+            tgt_analogy_scores = get_wordanalogy_scores(
+                self.tgt_dico.lang, self.tgt_dico.word2id,
+                self.tgt_emb.weight.data.cpu().numpy()
+            )
+        if src_analogy_scores is not None:
+            src_analogy_monolingual_scores = np.mean(list(src_analogy_scores.values()))
+            logger.info("Monolingual source word analogy score average: %.5f" % src_analogy_monolingual_scores)
+            to_log['src_analogy_monolingual_scores'] = src_analogy_monolingual_scores
+            to_log.update({'src_' + k: v for k, v in src_analogy_scores.items()})
+        if self.params.tgt_lang and tgt_analogy_scores is not None:
+            tgt_analogy_monolingual_scores = np.mean(list(tgt_analogy_scores.values()))
+            logger.info("Monolingual target word analogy score average: %.5f" % tgt_analogy_monolingual_scores)
+            to_log['tgt_analogy_monolingual_scores'] = tgt_analogy_monolingual_scores
+            to_log.update({'tgt_' + k: v for k, v in tgt_analogy_scores.items()})
 
     def crosslingual_wordsim(self, to_log):
         """

@@ -110,12 +110,13 @@ def get_wordsim_scores(language, word2id, embeddings, lower=True):
     return scores
 
 
-def get_wordanalogy_scores(language, word2id, embeddings, lower):
+def get_wordanalogy_scores(language, word2id, embeddings, lower=True):
     """
     Return (english) word analogy score
     """
     dirpath = os.path.join(MONOLINGUAL_EVAL_PATH, language)
-    assert os.path.isdir(dirpath) and type(lower) is bool
+    if not os.path.isdir(dirpath) or language not in ["en"]:
+        return None
 
     # normalize word embeddings
     embeddings = embeddings / np.sqrt((embeddings ** 2).sum(1))[:, None]
