@@ -136,7 +136,7 @@ def get_word_translation_accuracy(lang1, word2id1, emb1, lang2, word2id2, emb2, 
         raise Exception('Unknown method: "%s"' % method)
 
     results = []
-    top_matches = scores.topk(100, 1, True)[1]
+    top_matches = scores.topk(10, 1, True)[1]
     for k in [1, 5, 10]:
         top_k_matches = top_matches[:, :k]
         _matching = (top_k_matches == dico[:, 1][:, None].expand_as(top_k_matches)).sum(1)
