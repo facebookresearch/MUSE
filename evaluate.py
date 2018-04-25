@@ -26,6 +26,7 @@ parser.add_argument("--cuda", type=bool_flag, default=True, help="Run on GPU")
 # data
 parser.add_argument("--src_lang", type=str, default="", help="Source language")
 parser.add_argument("--tgt_lang", type=str, default="", help="Target language")
+parser.add_argument("--dico_eval", type=str, default="default", help="Path to evaluation dictionary")
 # reload pre-trained embeddings
 parser.add_argument("--src_emb", type=str, default="", help="Reload source embeddings")
 parser.add_argument("--tgt_emb", type=str, default="", help="Reload target embeddings")
@@ -41,6 +42,7 @@ params = parser.parse_args()
 assert params.src_lang, "source language undefined"
 assert os.path.isfile(params.src_emb)
 assert not params.tgt_lang or os.path.isfile(params.tgt_emb)
+assert params.dico_eval == 'default' or os.path.isfile(params.dico_eval)
 
 # build logger / model / trainer / evaluator
 logger = initialize_exp(params)
