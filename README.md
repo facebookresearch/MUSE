@@ -98,7 +98,7 @@ We release fastText Wikipedia **supervised** word embeddings for **30** language
 | Norwegian: [*text*](https://s3.amazonaws.com/arrival/embeddings/wiki.multi.no.vec) | Polish: [*text*](https://s3.amazonaws.com/arrival/embeddings/wiki.multi.pl.vec) | Portuguese: [*text*](https://s3.amazonaws.com/arrival/embeddings/wiki.multi.pt.vec) | Romanian: [*text*](https://s3.amazonaws.com/arrival/embeddings/wiki.multi.ro.vec) | Russian: [*text*](https://s3.amazonaws.com/arrival/embeddings/wiki.multi.ru.vec) | Slovak: [*text*](https://s3.amazonaws.com/arrival/embeddings/wiki.multi.sk.vec)
 | Slovenian: [*text*](https://s3.amazonaws.com/arrival/embeddings/wiki.multi.sl.vec) | Spanish: [*text*](https://s3.amazonaws.com/arrival/embeddings/wiki.multi.es.vec) | Swedish: [*text*](https://s3.amazonaws.com/arrival/embeddings/wiki.multi.sv.vec) | Turkish: [*text*](https://s3.amazonaws.com/arrival/embeddings/wiki.multi.tr.vec) | Ukrainian: [*text*](https://s3.amazonaws.com/arrival/embeddings/wiki.multi.uk.vec) | Vietnamese: [*text*](https://s3.amazonaws.com/arrival/embeddings/wiki.multi.vi.vec)
 
-
+You can visualize crosslingual nearest neighbors using [**demo.ipynb**](https://github.com/facebookresearch/MUSE/blob/master/demo.ipynb).
 
 
 ### Ground-truth bilingual dictionaries
