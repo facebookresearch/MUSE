@@ -58,7 +58,8 @@ To learn a mapping using adversarial training and iterative Procrustes refinemen
 ```bash
 python unsupervised.py --src_lang en --tgt_lang es --src_emb data/wiki.en.vec --tgt_emb data/wiki.es.vec --n_refinement 5
 ```
-By default, the validation metric is the mean cosine of word pairs from a synthetic dictionary built with CSLS (Cross-domain similarity local scaling).
+By default, the validation metric is the mean cosine of word pairs from a synthetic dictionary built with CSLS (Cross-domain similarity local scaling). For some language pairs (e.g. En-Zh),
+we recommend to center the embeddings using `--normalize_embeddings center`.
 
 ### Evaluate monolingual or cross-lingual embeddings (CPU|GPU)
 We also include a simple script to evaluate the quality of monolingual or cross-lingual word embeddings on several tasks:
