@@ -9,6 +9,7 @@ from logging import getLogger
 from copy import deepcopy
 import numpy as np
 from torch.autograd import Variable
+from torch import Tensor as torch_tensor
 
 from . import get_wordsim_scores, get_crosslingual_wordsim_scores, get_wordanalogy_scores
 from . import get_word_translation_accuracy
@@ -202,6 +203,7 @@ class Evaluator(object):
                 mean_cosine = -1e9
             else:
                 mean_cosine = (src_emb[dico[:dico_max_size, 0]] * tgt_emb[dico[:dico_max_size, 1]]).sum(1).mean()
+            mean_cosine = mean_cosine.item() if isinstance(mean_cosine, torch_tensor) else mean_cosine
             logger.info("Mean cosine (%s method, %s build, %i max size): %.5f"
                         % (dico_method, _params.dico_build, dico_max_size, mean_cosine))
             to_log['mean_cosine-%s-%s-%i' % (dico_method, _params.dico_build, dico_max_size)] = mean_cosine
