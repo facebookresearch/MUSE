@@ -162,6 +162,8 @@ def build_dictionary(src_emb, tgt_emb, params, s2t_candidates=None, t2s_candidat
     elif params.dico_build == 'T2S':
         dico = t2s_candidates
     else:
+        s2t_candidates = s2t_candidates.numpy() if isinstance(s2t_candidates, torch.Tensor) else s2t_candidates
+        t2s_candidates = t2s_candidates.numpy() if isinstance(t2s_candidates, torch.Tensor) else t2s_candidates
         s2t_candidates = set([(a, b) for a, b in s2t_candidates])
         t2s_candidates = set([(a, b) for a, b in t2s_candidates])
         if params.dico_build == 'S2T|T2S':
