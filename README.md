@@ -181,15 +181,25 @@ MUSE is the project at the origin of the work on unsupervised machine translatio
 
 ### Unsupervised Machine Translation With Monolingual Data Only
 
-[2] G. Lample, L. Denoyer, MA. Ranzato [*Unsupervised Machine Translation With Monolingual Data Only*](https://arxiv.org/abs/1711.00043)
+[2] G. Lample, A. Conneau, L. Denoyer, MA. Ranzato [*Unsupervised Machine Translation With Monolingual Data Only*](https://arxiv.org/abs/1711.00043)
 
 ```
 @article{lample2017unsupervised,
   title={Unsupervised Machine Translation Using Monolingual Corpora Only},
-  author={Lample, Guillaume and Denoyer, Ludovic and Ranzato, Marc'Aurelio},
+  author={Lample, Guillaume and Conneau, Alexis and Denoyer, Ludovic and Ranzato, Marc'Aurelio},
   journal={arXiv preprint arXiv:1711.00043},
   year={2017}
 }
 ```
+
+### Related work
+* [T. Mikolov, Q. V Le, I. Sutskever - Exploiting similarities among languages for machine translation, 2013](https://arxiv.org/abs/1309.4168)
+* [G. Dinu, A. Lazaridou, M. Baroni - Improving zero-shot learning by mitigating the hubness problem, 2015](https://arxiv.org/abs/1412.6568)
+* [S. L Smith, D. HP Turban, S. Hamblin, N. Y Hammerla - Offline bilingual word vectors, orthogonal transformations and the inverted softmax, 2017](https://arxiv.org/abs/1702.03859)
+* [M. Artetxe, G. Labaka, E. Agirre - Learning bilingual word embeddings with (almost) no bilingual data, 2017](https://aclanthology.coli.uni-saarland.de/papers/P17-1042/p17-1042)
+* [M. Zhang, Y. Liu, H. Luan, and M. Sun - Adversarial training for unsupervised bilingual lexicon induction, 2017](https://aclanthology.coli.uni-saarland.de/papers/P17-1179/p17-1179)
+* [Y. Hoshen, L. Wolf - An Iterative Closest Point Method for Unsupervised Word Translation, 2018](https://arxiv.org/abs/1801.06126)
+* [A. Joulin, P. Bojanowski, T. Mikolov, E. Grave - Improving supervised bilingual mapping of word embeddings, 2018](https://arxiv.org/abs/1804.07745)
+* [E. Grave, A. Joulin, Q. Berthet - Unsupervised Alignment of Embeddings with Wasserstein Procrustes, 2018](https://arxiv.org/abs/1805.11222)
 
 Contact: [gl@fb.com](mailto:gl@fb.com)  [aconneau@fb.com](mailto:aconneau@fb.com)
