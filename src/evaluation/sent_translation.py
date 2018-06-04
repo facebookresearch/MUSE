@@ -128,7 +128,7 @@ def get_sent_translation_accuracy(data, lg1, word2id1, emb1, lg2, word2id2, emb2
     top_matches = scores.topk(10, 1, True)[1]
     for k in [1, 5, 10]:
         top_k_matches = (top_matches[:, :k] == torch.from_numpy(idx_query)[:, None]).sum(1)
-        precision_at_k = 100 * np.mean(top_k_matches.float().mean())
+        precision_at_k = 100 * top_k_matches.float().numpy().mean()
         logger.info("%i queries (%s) - %s - Precision at k = %i: %f" %
                     (len(top_k_matches), lg_query.upper(), method, k, precision_at_k))
         results.append(('sent-precision_at_%i' % k, precision_at_k))
