@@ -2,7 +2,7 @@
 ![Model](https://s3.amazonaws.com/arrival/outline_all.png)
 
 MUSE is a Python library for *multilingual word embeddings*, whose goal is to provide the community with:
-* state-of-the-art multilingual word embeddings based on [fastText](https://github.com/facebookresearch/fastText/blob/master/pretrained-vectors.md)
+* state-of-the-art multilingual word embeddings ([fastText](https://github.com/facebookresearch/fastText/blob/master/pretrained-vectors.md) embeddings aligned in a common space)
 * large-scale high-quality bilingual dictionaries for training and evaluation
 
 We include two methods, one *supervised* that uses a bilingual dictionary or identical character strings, and one *unsupervised* that does not use any parallel data (see [Word Translation without Parallel Data](https://arxiv.org/pdf/1710.04087.pdf) for more details).
@@ -85,7 +85,7 @@ When loading embeddings, the model can load:
 The two first options are very fast and can load 1 million embeddings in a few seconds, while loading text files can take a while.
 
 ## Download
-We provide multilingual embeddings and ground-truth bilingual dictionaries.
+We provide multilingual embeddings and ground-truth bilingual dictionaries. These embeddings are fastText embeddings that have been aligned in a common space.
 
 ### Multilingual word Embeddings
 We release fastText Wikipedia **supervised** word embeddings for **30** languages, aligned in a **single vector space**.
