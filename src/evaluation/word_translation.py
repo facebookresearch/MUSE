@@ -130,7 +130,8 @@ def get_word_translation_accuracy(lang1, word2id1, emb1, lang2, word2id2, emb2, 
         query = emb1[dico[:, 0]]
         scores = query.mm(emb2.transpose(0, 1))
         scores.mul_(2)
-        scores.sub_(average_dist1[dico[:, 0]][:, None] + average_dist2[None, :])
+        scores.sub_(average_dist1[dico[:, 0]][:, None])
+        scores.sub_(average_dist2[None, :])
 
     else:
         raise Exception('Unknown method: "%s"' % method)
