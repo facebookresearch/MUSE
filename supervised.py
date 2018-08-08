@@ -17,10 +17,9 @@ from src.trainer import Trainer
 from src.evaluation import Evaluator
 
 
-# VALIDATION_METRIC = 'precision_at_1-nn'
-VALIDATION_METRIC = 'precision_at_1-csls_knn_10'
-# unsupervised criterion: 'mean_cosine-csls_knn_10-S2T-10000'
-#   supervised criterion: 'precision_at_1-csls_knn_10'
+VALIDATION_METRIC_SUP = 'precision_at_1-csls_knn_10'
+VALIDATION_METRIC_UNSUP = 'mean_cosine-csls_knn_10-S2T-10000'
+
 
 # main
 parser = argparse.ArgumentParser(description='Supervised training')
@@ -77,6 +76,10 @@ evaluator = Evaluator(trainer)
 # load a training dictionary. if a dictionary path is not provided, use a default
 # one ("default") or create one based on identical character strings ("identical_char")
 trainer.load_training_dico(params.dico_train)
+
+# define the validation metric
+VALIDATION_METRIC = VALIDATION_METRIC_UNSUP if params.dico_train == 'identical_char' else VALIDATION_METRIC_SUP
+logger.info("Validation metric: %s" % VALIDATION_METRIC)
 
 """
 Learning loop for Procrustes Iterative Learning
