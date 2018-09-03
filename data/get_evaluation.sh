@@ -108,8 +108,8 @@ if false; then
   for lg_pair in it-en  # es-en etc
   do
     curl -Lo $lg_pair.tgz $europarl/$lg_pair.tgz
-    tar -xvf it-en.tgz
-    rm it-en.tgz
+    tar -xvf $lg_pair.tgz
+    rm $lg_pair.tgz
     lgs=(${lg_pair//-/ })
     for lg in ${lgs[0]} ${lgs[1]}
     do
