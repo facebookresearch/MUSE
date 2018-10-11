@@ -62,7 +62,7 @@ parser.add_argument("--lr_shrink", type=float, default=0.5, help="Shrink the lea
 # training refinement
 parser.add_argument("--n_refinement", type=int, default=5, help="Number of refinement iterations (0 to disable the refinement procedure)")
 # dictionary creation parameters (for refinement)
-parser.add_argument("--dico_eval", type=str, default="default", help="Path to evaluation dictionary")
+parser.add_argument("--dico_eval", type=str, default="", help="Path to evaluation dictionary. If an empty path is given, then don't use a dictionary to evaluate the aligned word embeddings.")
 parser.add_argument("--dico_method", type=str, default='csls_knn_10', help="Method used for dictionary generation (nn/invsm_beta_30/csls_knn_10)")
 parser.add_argument("--dico_build", type=str, default='S2T', help="S2T,T2S,S2T|T2S,S2T&T2S")
 parser.add_argument("--dico_threshold", type=float, default=0, help="Threshold confidence for dictionary generation")
@@ -87,7 +87,7 @@ assert params.dis_lambda > 0 and params.dis_steps > 0
 assert 0 < params.lr_shrink <= 1
 assert os.path.isfile(params.src_emb)
 assert os.path.isfile(params.tgt_emb)
-assert params.dico_eval == 'default' or os.path.isfile(params.dico_eval)
+assert params.dico_eval == '' or os.path.isfile(params.dico_eval)
 assert params.export in ["", "txt", "pth"]
 
 # build model / trainer / evaluator
