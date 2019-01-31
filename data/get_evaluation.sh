@@ -6,7 +6,7 @@
 #
 
 en_analogy='https://storage.googleapis.com/google-code-archive-source/v2/code.google.com/word2vec/source-archive.zip'
-aws_path='https://s3.amazonaws.com/arrival'
+dl_path='https://dl.fbaipublicfiles.com/arrival'
 semeval_2017='http://alt.qcri.org/semeval2017/task2/data/uploads'
 europarl='http://www.statmt.org/europarl/v7'
 
@@ -30,9 +30,9 @@ do
   for suffix in .txt .0-5000.txt .5000-6500.txt
   do
     fname=en-$lg$suffix
-    curl -Lo crosslingual/dictionaries/$fname $aws_path/dictionaries/$fname
+    curl -Lo crosslingual/dictionaries/$fname $dl_path/dictionaries/$fname
     fname=$lg-en$suffix
-    curl -Lo crosslingual/dictionaries/$fname $aws_path/dictionaries/$fname
+    curl -Lo crosslingual/dictionaries/$fname $dl_path/dictionaries/$fname
   done
 done
 
@@ -46,7 +46,7 @@ do
       for suffix in .txt .0-5000.txt .5000-6500.txt
       do
         fname=$src_lg-$tgt_lg$suffix
-        curl -Lo crosslingual/dictionaries/$fname $aws_path/dictionaries/european/$fname
+        curl -Lo crosslingual/dictionaries/$fname $dl_path/dictionaries/$fname
       done
     fi
   done
@@ -56,7 +56,7 @@ done
 for fname in OPUS_en_it_europarl_train_5K.txt OPUS_en_it_europarl_test.txt
 do
     echo $fname
-    curl -Lo crosslingual/dictionaries/$fname $aws_path/dictionaries/$fname
+    curl -Lo crosslingual/dictionaries/$fname $dl_path/dictionaries/$fname
 done
 
 ## Monolingual wordsim tasks
@@ -67,7 +67,7 @@ do
   for wsim in ${wordsim_lg[$lang]}
   do
     echo $wsim
-    curl -Lo monolingual/$lang/$wsim $aws_path/$lang/$wsim
+    curl -Lo monolingual/$lang/$wsim $dl_path/$lang/$wsim
   done
 done
 
