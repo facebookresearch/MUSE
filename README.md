@@ -40,14 +40,14 @@ cd data/
 *Note: Requires bash 4. The download of Europarl is disabled by default (slow), you can enable it [here](https://github.com/facebookresearch/MUSE/blob/master/data/get_evaluation.sh#L99-L100).*
 
 ## Get monolingual word embeddings
-For pre-trained monolingual word embeddings, we highly recommend [fastText Wikipedia embeddings](https://github.com/facebookresearch/fastText/blob/master/pretrained-vectors.md), or using [fastText](https://github.com/facebookresearch/fastText) to train your own word embeddings from your corpus.
+For pre-trained monolingual word embeddings, we highly recommend [fastText Wikipedia embeddings](https://fasttext.cc/docs/en/pretrained-vectors.html), or using [fastText](https://github.com/facebookresearch/fastText) to train your own word embeddings from your corpus.
 
 You can download the English (en) and Spanish (es) embeddings this way:
 ```bash
 # English fastText Wikipedia embeddings
-curl -Lo data/wiki.en.vec https://s3-us-west-1.amazonaws.com/fasttext-vectors/wiki.en.vec
+curl -Lo data/wiki.en.vec https://dl.fbaipublicfiles.com/fasttext/vectors-wiki/wiki.en.vec
 # Spanish fastText Wikipedia embeddings
-curl -Lo data/wiki.es.vec https://s3-us-west-1.amazonaws.com/fasttext-vectors/wiki.es.vec
+curl -Lo data/wiki.es.vec https://dl.fbaipublicfiles.com/fasttext/vectors-wiki/wiki.es.vec
 ```
 
 ## Align monolingual word embeddings
