@@ -212,5 +212,6 @@ MUSE is the project at the origin of the work on unsupervised machine translatio
 * [Y. Hoshen, L. Wolf - An Iterative Closest Point Method for Unsupervised Word Translation, 2018](https://arxiv.org/abs/1801.06126)
 * [A. Joulin, P. Bojanowski, T. Mikolov, E. Grave - Improving supervised bilingual mapping of word embeddings, 2018](https://arxiv.org/abs/1804.07745)
 * [E. Grave, A. Joulin, Q. Berthet - Unsupervised Alignment of Embeddings with Wasserstein Procrustes, 2018](https://arxiv.org/abs/1805.11222)
+* [T. Schuster, O. Ram, R. Barzilay, A. Globerson - Cross-Lingual Alignment of Contextual Word Embeddings, with Applications to Zero-shot Dependency Parsing, 2019](https://arxiv.org/abs/1902.09492)
 
 Contact: [gl@fb.com](mailto:gl@fb.com)  [aconneau@fb.com](mailto:aconneau@fb.com)
