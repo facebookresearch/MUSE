@@ -112,10 +112,10 @@ def get_wordsim_scores(language, word2id, embeddings, lower=True):
 
 def get_wordanalogy_scores(language, word2id, embeddings, lower=True):
     """
-    Return (english) word analogy score
+    Return monolingual word analogy scores.
     """
-    dirpath = os.path.join(MONOLINGUAL_EVAL_PATH, language)
-    if not os.path.isdir(dirpath) or language not in ["en"]:
+    filepath = os.path.join(MONOLINGUAL_EVAL_PATH, language, 'questions-words.txt')
+    if not os.path.exists(filepath):
         return None
 
     # normalize word embeddings
@@ -127,7 +127,7 @@ def get_wordanalogy_scores(language, word2id, embeddings, lower=True):
     word_ids = {}
     queries = {}
 
-    with io.open(os.path.join(dirpath, 'questions-words.txt'), 'r', encoding='utf-8') as f:
+    with io.open(filepath, 'r', encoding='utf-8') as f:
         for line in f:
             # new line
             line = line.rstrip()
