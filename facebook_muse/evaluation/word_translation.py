@@ -14,10 +14,10 @@ import torch
 from ..utils import get_nn_avg_dist
 
 
-DIC_EVAL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'crosslingual', 'dictionaries')
+DIC_EVAL_PATH = os.path.join('data', 'crosslingual', 'dictionaries')
 
 
-logger = getLogger()
+logger = getLogger(__name__)
 
 
 def load_identical_char_dico(word2id1, word2id2):
@@ -46,6 +46,7 @@ def load_dictionary(path, word2id1, word2id2):
     Return a torch tensor of size (n, 2) where n is the size of the
     loader dictionary, and sort it by source word frequency.
     """
+    print(path)
     assert os.path.isfile(path)
 
     pairs = []

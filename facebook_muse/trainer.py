@@ -19,7 +19,7 @@ from .dico_builder import build_dictionary
 from .evaluation.word_translation import DIC_EVAL_PATH, load_identical_char_dico, load_dictionary
 
 
-logger = getLogger()
+logger = getLogger(__name__)
 
 
 class Trainer(object):

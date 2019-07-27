@@ -11,10 +11,10 @@ import argparse
 from collections import OrderedDict
 import torch
 
-from src.utils import bool_flag, initialize_exp
-from src.models import build_model
-from src.trainer import Trainer
-from src.evaluation import Evaluator
+from facebook_muse.utils import bool_flag, initialize_exp
+from facebook_muse.models import build_model
+from facebook_muse.trainer import Trainer
+from facebook_muse.evaluation import Evaluator
 
 
 VALIDATION_METRIC_SUP = 'precision_at_1-csls_knn_10'

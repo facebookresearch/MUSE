@@ -11,13 +11,13 @@ from logging import getLogger
 import numpy as np
 import torch
 
-from src.utils import bow_idf, get_nn_avg_dist
+from facebook_muse.utils import bow_idf, get_nn_avg_dist
 
 
 EUROPARL_DIR = 'data/crosslingual/europarl'
 
 
-logger = getLogger()
+logger = getLogger(__name__)
 
 
 def load_europarl_data(lg1, lg2, n_max=1e10, lower=True):
