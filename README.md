@@ -14,6 +14,13 @@ We include two methods, one *supervised* that uses a bilingual dictionary or ide
 
 MUSE is available on CPU or GPU, in Python 2 or 3. Faiss is *optional* for GPU users - though Faiss-GPU will greatly speed up nearest neighbor search - and *highly recommended* for CPU users. Faiss can be installed using "conda install faiss-cpu -c pytorch" or "conda install faiss-gpu -c pytorch".
 
+## Installation
+```bash
+python -m pip install .
+```
+
+This adds bash scripts and entry point scripts to the path.
+
 ## Get evaluation datasets
 To download monolingual and cross-lingual word embeddings evaluation datasets:
 * Our 110 [bilingual dictionaries](https://github.com/facebookresearch/MUSE#ground-truth-bilingual-dictionaries)
@@ -24,17 +31,18 @@ To download monolingual and cross-lingual word embeddings evaluation datasets:
 You can simply run:
 
 ```bash
+mkdir data
 cd data/
 wget https://dl.fbaipublicfiles.com/arrival/vectors.tar.gz
 wget https://dl.fbaipublicfiles.com/arrival/wordsim.tar.gz
 wget https://dl.fbaipublicfiles.com/arrival/dictionaries.tar.gz
+cd ..
 ```
 
 Alternatively, you can also download the data with:
 
 ```bash
-cd data/
-./get_evaluation.sh
+get_evaluation.sh
 ```
 
 *Note: Requires bash 4. The download of Europarl is disabled by default (slow), you can enable it [here](https://github.com/facebookresearch/MUSE/blob/master/data/get_evaluation.sh#L99-L100).*
@@ -60,14 +68,14 @@ For more details on these approaches, please check [here](https://arxiv.org/pdf/
 ### The supervised way: iterative Procrustes (CPU|GPU)
 To learn a mapping between the source and the target space, simply run:
 ```bash
-python supervised.py --src_lang en --tgt_lang es --src_emb data/wiki.en.vec --tgt_emb data/wiki.es.vec --n_refinement 5 --dico_train default
+supervised --src_lang en --tgt_lang es --src_emb data/wiki.en.vec --tgt_emb data/wiki.es.vec --n_refinement 5 --dico_train default
 ```
 By default, *dico_train* will point to our ground-truth dictionaries (downloaded above); when set to "identical_char" it will use identical character strings between source and target languages to form a vocabulary. Logs and embeddings will be saved in the dumped/ directory.
 
 ### The unsupervised way: adversarial training and refinement (CPU|GPU)
 To learn a mapping using adversarial training and iterative Procrustes refinement, run:
 ```bash
-python unsupervised.py --src_lang en --tgt_lang es --src_emb data/wiki.en.vec --tgt_emb data/wiki.es.vec --n_refinement 5
+unsupervised --src_lang en --tgt_lang es --src_emb data/wiki.en.vec --tgt_emb data/wiki.es.vec --n_refinement 5
 ```
 By default, the validation metric is the mean cosine of word pairs from a synthetic dictionary built with CSLS (Cross-domain similarity local scaling). For some language pairs (e.g. En-Zh),
 we recommend to center the embeddings using `--normalize_embeddings center`.
@@ -77,12 +85,12 @@ We also include a simple script to evaluate the quality of monolingual or cross-
 
 **Monolingual**
 ```bash
-python evaluate.py --src_lang en --src_emb data/wiki.en.vec --max_vocab 200000
+evaluate --src_lang en --src_emb data/wiki.en.vec --max_vocab 200000
 ```
 
 **Cross-lingual**
 ```bash
-python evaluate.py --src_lang en --tgt_lang es --src_emb data/wiki.en-es.en.vec --tgt_emb data/wiki.en-es.es.vec --max_vocab 200000
+evaluate --src_lang en --tgt_lang es --src_emb data/wiki.en-es.en.vec --tgt_emb data/wiki.en-es.es.vec --max_vocab 200000
 ```
 
 ## Word embedding format

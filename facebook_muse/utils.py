@@ -25,7 +25,7 @@ from .dictionary import Dictionary
 
 MAIN_DUMP_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'dumped')
 
-logger = getLogger()
+logger = getLogger(__name__)
 
 
 # load Faiss if available (dramatically accelerates the nearest neighbor search)

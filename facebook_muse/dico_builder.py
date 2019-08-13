@@ -10,8 +10,7 @@ import torch
 
 from .utils import get_nn_avg_dist
 
-
-logger = getLogger()
+logger = getLogger(__name__)
 
 
 def get_candidates(emb1, emb2, params):

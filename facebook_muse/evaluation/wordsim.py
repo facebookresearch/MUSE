@@ -17,7 +17,7 @@ MONOLINGUAL_EVAL_PATH = 'data/monolingual'
 SEMEVAL17_EVAL_PATH = 'data/crosslingual/wordsim'
 
 
-logger = getLogger()
+logger = getLogger(__name__)
 
 
 def get_word_pairs(path, lower=True):
