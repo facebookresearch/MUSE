@@ -73,7 +73,7 @@ def load_fasttext_model(path):
     Load a binarized fastText model.
     """
     try:
-        import fastText
+        import fasttext as fastText
     except ImportError:
         raise Exception("Unable to import fastText. Please install fastText for Python: "
                         "https://github.com/facebookresearch/fastText")
