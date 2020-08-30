@@ -57,7 +57,7 @@ def load_dictionary(path, word2id1, word2id2):
         for index, line in enumerate(f):
             assert line == line.lower()
             parts = line.rstrip().split()
-            if len(parts) < 2:
+            if len(parts) != 2: # to be more general
                 logger.warning("Could not parse line %s (%i)", line, index)
                 continue
             word1, word2 = parts
