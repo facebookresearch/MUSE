@@ -56,7 +56,7 @@ def load_dictionary(path, word2id1, word2id2):
     with io.open(path, 'r', encoding='utf-8') as f:
         for index, line in enumerate(f):
             assert line == line.lower()
-            parts = line.rstrip().split()
+            parts = line.rstrip().split('\t')
             if len(parts) < 2:
                 logger.warning("Could not parse line %s (%i)", line, index)
                 continue
