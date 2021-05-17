@@ -73,11 +73,11 @@ def load_fasttext_model(path):
     Load a binarized fastText model.
     """
     try:
-        import fastText
+        import fasttext
     except ImportError:
         raise Exception("Unable to import fastText. Please install fastText for Python: "
                         "https://github.com/facebookresearch/fastText")
-    return fastText.load_model(path)
+    return fasttext.load_model(path)
 
 
 def bow(sentences, word_vec, normalize=False):
