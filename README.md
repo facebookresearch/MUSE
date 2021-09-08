@@ -34,6 +34,7 @@ Alternatively, you can also download the data with:
 
 ```bash
 cd data/
+run chmod u+x ./get_evaluation.sh for permission access
 ./get_evaluation.sh
 ```
 
