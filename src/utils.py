@@ -270,11 +270,13 @@ def read_txt_embeddings(params, source, full_vocab):
     lang = params.src_lang if source else params.tgt_lang
     emb_path = params.src_emb if source else params.tgt_emb
     _emb_dim_file = params.emb_dim
-    if not full_vocab:
+
+    with io.open(emb_path, 'r', encoding='utf-8', newline='\n', errors='ignore') as f:
+            vocab_size = sum([1 for _ in f])-1
+
+    if not full_vocab and params.max_vocab<vocab_size:
         embeddings = np.empty([params.max_vocab, params.emb_dim], dtype=np.float32)
     else:
-        with io.open(emb_path, 'r', encoding='utf-8', newline='\n', errors='ignore') as f:
-            vocab_size = sum([1 for _ in f])-1
         embeddings = np.empty([vocab_size, params.emb_dim], dtype=np.float32)
 
     with io.open(emb_path, 'r', encoding='utf-8', newline='\n', errors='ignore') as f:
