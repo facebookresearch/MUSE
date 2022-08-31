@@ -1,0 +1,17 @@
+{
+  "name": "compressor",
+  "version": "1.0.0",
+  "description": "compress dictionaries embeddings to binary format for lighter network transfer and processing",
+  "main": "compressor.js",
+  "type": "module",
+  "scripts": {
+    "compress": "node compressor.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "line-by-line": "^0.1.6",
+    "protobufjs": "^7.1.0"
+  }
+}

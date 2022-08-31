@@ -1,0 +1,12 @@
+syntax = "proto3";
+package MuseModels;
+option optimize_for = LITE_RUNTIME;
+
+message Vector {
+  required string word = 1;
+  repeated float vector = 2;
+}
+
+message Simple {
+  repeated Vector data = 1;
+}
